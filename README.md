@@ -24,7 +24,7 @@ Download earlier versions of Marlin on the [Releases page](https://github.com/Ma
 
 To build Marlin 2.0 you'll need [Arduino IDE 1.8.8 or newer](https://www.arduino.cc/en/main/software) or [PlatformIO](http://docs.platformio.org/en/latest/ide.html#platformio-ide). We've posted detailed instructions on [Building Marlin with Arduino](http://marlinfw.org/docs/basics/install_arduino.html) and [Building Marlin with PlatformIO for ReArm](http://marlinfw.org/docs/basics/install_rearm.html) (which applies well to other 32-bit boards).
 
-##Prebuild Firmware
+## Prebuild Firmware
 The Prebuild Firmware will be released once all upgrade instructions in the WIKI are done.
 Until that happens follow the steps above.
 
