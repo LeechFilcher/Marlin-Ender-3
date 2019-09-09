@@ -14,7 +14,7 @@
 
 
 Additional documentation can be found at the [Marlin Home Page](http://marlinfw.org/).
-Please test this firmware and let us know if it misbehaves in any way. Volunteers are standing by!
+Please test this firmware and let us know if it misbehaves in any way. Volunteers are standing by! For support with this specific Fork and Build Instructions contact us at: https://support.deamonic.net
 
 ## Marlin 2.0 Bugfix Branch
 
