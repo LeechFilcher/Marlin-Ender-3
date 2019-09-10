@@ -574,6 +574,7 @@
    * Use the option below to force an eeprom write to a V3.1 probe regardless.
    */
   #define BLTOUCH_SET_5V_MODE
+  #define BLTOUCH_SET_OD_MODE
   /**
    * Safety: Activate if connecting a probe with an unknown voltage mode.
    * V3.0: Set a probe into mode selected above at Marlin startup. Required for 5V mode on 3.0
