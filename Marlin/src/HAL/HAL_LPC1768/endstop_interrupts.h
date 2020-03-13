@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -42,6 +42,8 @@ void endstop_ISR() { endstops.update(); }
 
 void setup_endstop_interrupts() {
   #define _ATTACH(P) attachInterrupt(digitalPinToInterrupt(P), endstop_ISR, CHANGE)
+  #define LPC1768_PIN_INTERRUPT_M(pin) ((pin >> 0x5 & 0x7) == 0 || (pin >> 0x5 & 0x7) == 2)
+
   #if HAS_X_MAX
     #if !LPC1768_PIN_INTERRUPT_M(X_MAX_PIN)
       #error "X_MAX_PIN is not INTERRUPT-capable."
@@ -91,7 +93,7 @@ void setup_endstop_interrupts() {
     _ATTACH(Z2_MIN_PIN);
   #endif
   #if HAS_Z3_MAX
-    #if !LPC1768_PIN_INTERRUPT_M(Z3_MIN_PIN)
+    #if !LPC1768_PIN_INTERRUPT_M(Z3_MAX_PIN)
       #error "Z3_MIN_PIN is not INTERRUPT-capable."
     #endif
     _ATTACH(Z3_MAX_PIN);
@@ -101,6 +103,18 @@ void setup_endstop_interrupts() {
       #error "Z3_MIN_PIN is not INTERRUPT-capable."
     #endif
     _ATTACH(Z3_MIN_PIN);
+  #endif
+  #if HAS_Z4_MAX
+    #if !LPC1768_PIN_INTERRUPT_M(Z4_MAX_PIN)
+      #error "Z4_MIN_PIN is not INTERRUPT-capable."
+    #endif
+    _ATTACH(Z4_MAX_PIN);
+  #endif
+  #if HAS_Z4_MIN
+    #if !LPC1768_PIN_INTERRUPT_M(Z4_MIN_PIN)
+      #error "Z4_MIN_PIN is not INTERRUPT-capable."
+    #endif
+    _ATTACH(Z4_MIN_PIN);
   #endif
   #if HAS_Z_MIN_PROBE_PIN
     #if !LPC1768_PIN_INTERRUPT_M(Z_MIN_PROBE_PIN)

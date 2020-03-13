@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -136,15 +136,6 @@ void HAL_init() {
     #endif
   }
 
-  #if NUM_SERIAL > 0
-    MYSERIAL0.begin(BAUDRATE);
-    #if NUM_SERIAL > 1
-      MYSERIAL1.begin(BAUDRATE);
-    #endif
-    SERIAL_PRINTF("\n\necho:%s (%dMhz) Initialized\n", isLPC1769() ? "LPC1769" : "LPC1768", SystemCoreClock / 1000000);
-    SERIAL_FLUSHTX();
-  #endif
-
   HAL_timer_init();
 }
 
@@ -155,7 +146,7 @@ void HAL_idletask() {
     // a PC via USB.
     // Other HALs use IS_SD_PRINTING() and IS_SD_FILE_OPEN() to check for access but
     // this will not reliably detect delete operations. To be safe we will lock
-    // the disk if Marlin has it mounted. Unfortuately there is currently no way
+    // the disk if Marlin has it mounted. Unfortunately there is currently no way
     // to unmount the disk from the LCD menu.
     // if (IS_SD_PRINTING() || IS_SD_FILE_OPEN())
     if (card.isMounted())

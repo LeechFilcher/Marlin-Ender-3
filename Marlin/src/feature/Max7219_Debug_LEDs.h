@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -75,7 +75,7 @@ class Max7219 {
 public:
   static uint8_t led_line[MAX7219_LINES];
 
-  Max7219() { }
+  Max7219() {}
 
   static void init();
   static void register_setup();

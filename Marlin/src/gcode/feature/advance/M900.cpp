@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -99,13 +99,13 @@ void GcodeSuite::M900() {
 
     if (!parser.seen_any()) {
       #if EXTRUDERS < 2
-        SERIAL_ECHOLNPAIR("Advance S", ext_slot, " K", planner.extruder_advance_K[0]);
-        SERIAL_ECHOLNPAIR("(Slot ", 1 - ext_slot, " K", saved_extruder_advance_K[0], ")");
+        SERIAL_ECHOLNPAIR("Advance S", ext_slot, " K", planner.extruder_advance_K[0],
+                          "(Slot ", 1 - ext_slot, " K", saved_extruder_advance_K[0], ")");
       #else
         LOOP_L_N(i, EXTRUDERS) {
           const int slot = (int)TEST(lin_adv_slot, i);
-          SERIAL_ECHOLNPAIR("Advance T", int(i), " S", slot, " K", planner.extruder_advance_K[i]);
-          SERIAL_ECHOLNPAIR("(Slot ", 1 - slot, " K", saved_extruder_advance_K[i], ")");
+          SERIAL_ECHOLNPAIR("Advance T", int(i), " S", slot, " K", planner.extruder_advance_K[i],
+                            "(Slot ", 1 - slot, " K", saved_extruder_advance_K[i], ")");
           SERIAL_EOL();
         }
       #endif

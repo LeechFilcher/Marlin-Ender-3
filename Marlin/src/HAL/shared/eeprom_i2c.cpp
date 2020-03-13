@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -23,6 +23,9 @@
 /**
  * Description: functions for I2C connected external EEPROM.
  * Not platform dependent.
+ *
+ * TODO: Some platform Arduino libraries define these functions
+ *       so Marlin needs to add a glue layer to prevent the conflict.
  */
 
 #include "../../inc/MarlinConfig.h"
@@ -43,11 +46,7 @@ static uint8_t eeprom_device_address = 0x50;
 // ------------------------
 
 static void eeprom_init() {
-  static bool eeprom_initialized = false;
-  if (!eeprom_initialized) {
-    Wire.begin();
-    eeprom_initialized = true;
-  }
+  Wire.begin();
 }
 
 void eeprom_write_byte(uint8_t *pos, unsigned char value) {

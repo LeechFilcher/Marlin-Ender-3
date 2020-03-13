@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -25,7 +25,7 @@
 #if ENABLED(PINS_DEBUGGING)
 
 #include "../gcode.h"
-#include "../../Marlin.h" // for pin_is_protected
+#include "../../MarlinCore.h" // for pin_is_protected
 #include "../../pins/pinsDebug.h"
 #include "../../module/endstops.h"
 
@@ -50,12 +50,6 @@
   #define GET_PIN_MAP_PIN_M43(Q) GET_PIN_MAP_PIN(Q)
 #endif
 
-inline void _watchdog_reset() {
-  #if ENABLED(USE_WATCHDOG)
-    watchdog_reset();
-  #endif
-}
-
 inline void toggle_pins() {
   const bool ignore_protection = parser.boolval('I');
   const int repeat = parser.intval('R', 1),
@@ -71,7 +65,7 @@ inline void toggle_pins() {
       SERIAL_EOL();
     }
     else {
-      _watchdog_reset();
+      watchdog_refresh();
       report_pin_state_extended(pin, ignore_protection, true, "Pulsing   ");
       #if AVR_AT90USB1286_FAMILY // Teensy IDEs don't know about these pins so must use FASTIO
         if (pin == TEENSY_E2) {
@@ -95,10 +89,10 @@ inline void toggle_pins() {
       {
         pinMode(pin, OUTPUT);
         for (int16_t j = 0; j < repeat; j++) {
-          _watchdog_reset(); extDigitalWrite(pin, 0); safe_delay(wait);
-          _watchdog_reset(); extDigitalWrite(pin, 1); safe_delay(wait);
-          _watchdog_reset(); extDigitalWrite(pin, 0); safe_delay(wait);
-          _watchdog_reset();
+          watchdog_refresh(); extDigitalWrite(pin, 0); safe_delay(wait);
+          watchdog_refresh(); extDigitalWrite(pin, 1); safe_delay(wait);
+          watchdog_refresh(); extDigitalWrite(pin, 0); safe_delay(wait);
+          watchdog_refresh();
         }
       }
     }
@@ -337,10 +331,10 @@ void GcodeSuite::M43() {
       KEEPALIVE_STATE(PAUSED_FOR_USER);
       wait_for_user = true;
       #if ENABLED(HOST_PROMPT_SUPPORT)
-        host_prompt_do(PROMPT_USER_CONTINUE, PSTR("M43 Wait Called"), PSTR("Continue"));
+        host_prompt_do(PROMPT_USER_CONTINUE, PSTR("M43 Wait Called"), CONTINUE_STR);
       #endif
       #if ENABLED(EXTENSIBLE_UI)
-        ExtUI::onUserConfirmRequired(PSTR("M43 Wait Called"));
+        ExtUI::onUserConfirmRequired_P(PSTR("M43 Wait Called"));
       #endif
     #endif
 

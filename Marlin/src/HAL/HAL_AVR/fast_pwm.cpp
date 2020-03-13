@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -23,7 +23,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if ENABLED(FAST_PWM_FAN)
+#if ENABLED(FAST_PWM_FAN) || SPINDLE_LASER_PWM
 
 #include "HAL.h"
 
@@ -278,5 +278,5 @@ void set_pwm_duty(const pin_t pin, const uint16_t v, const uint16_t v_size/*=255
   }
 }
 
-#endif // FAST_PWM_FAN
+#endif // FAST_PWM_FAN || SPINDLE_LASER_PWM
 #endif // __AVR__

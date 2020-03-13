@@ -1,7 +1,7 @@
 /**
  * Marlin 3D Printer Firmware
  *
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  * Copyright (c) 2016 Bob Cousins bobcousins42@googlemail.com
  * Copyright (c) 2015-2016 Nico Tonnhofer wurstnase.reprap@gmail.com
  * Copyright (c) 2017 Victor Perez
@@ -27,8 +27,8 @@
 
 #ifdef __STM32F1__
 
-#include "HAL.h"
 #include "../../inc/MarlinConfig.h"
+#include "HAL.h"
 
 #include <STM32ADC.h>
 
@@ -118,8 +118,17 @@ const uint8_t adc_pins[] = {
   #if HAS_TEMP_ADC_5
     TEMP_5_PIN,
   #endif
+  #if HAS_TEMP_ADC_6
+    TEMP_6_PIN,
+  #endif
+  #if HAS_TEMP_ADC_7
+    TEMP_7_PIN,
+  #endif
   #if ENABLED(FILAMENT_WIDTH_SENSOR)
     FILWIDTH_PIN,
+  #endif
+  #if ENABLED(ADC_KEYPAD)
+    ADC_KEYPAD_PIN,
   #endif
   #if HAS_JOY_ADC_X
     JOY_X_PIN,
@@ -157,8 +166,17 @@ enum TEMP_PINS : char {
   #if HAS_TEMP_ADC_5
     TEMP_5,
   #endif
+  #if HAS_TEMP_ADC_6
+    TEMP_6,
+  #endif
+  #if HAS_TEMP_ADC_7
+    TEMP_7,
+  #endif
   #if ENABLED(FILAMENT_WIDTH_SENSOR)
     FILWIDTH,
+  #endif
+  #if ENABLED(ADC_KEYPAD)
+    ADC_KEY,
   #endif
   #if HAS_JOY_ADC_X
     JOY_X,
@@ -233,7 +251,7 @@ void HAL_idletask() {
       // a PC via USB.
       // Other HALs use IS_SD_PRINTING() and IS_SD_FILE_OPEN() to check for access but
       // this will not reliably detect delete operations. To be safe we will lock
-      // the disk if Marlin has it mounted. Unfortuately there is currently no way
+      // the disk if Marlin has it mounted. Unfortunately there is currently no way
       // to unmount the disk from the LCD menu.
       // if (IS_SD_PRINTING() || IS_SD_FILE_OPEN())
       /* copy from lpc1768 framework, should be fixed later for process SHARED_SD_CARD*/
@@ -242,14 +260,6 @@ void HAL_idletask() {
     MarlinMSC.loop();
   #endif
 }
-
-/* VGPV Done with defines
-// disable interrupts
-void cli() { noInterrupts(); }
-
-// enable interrupts
-void sei() { interrupts(); }
-*/
 
 void HAL_clear_reset_source() { }
 
@@ -272,7 +282,7 @@ extern "C" {
 // return free memory between end of heap (or end bss) and whatever is current
 
 /*
-#include "wirish/syscalls.c"
+#include <wirish/syscalls.c>
 //extern caddr_t _sbrk(int incr);
 #ifndef CONFIG_HEAP_END
 extern char _lm_heap_end;
@@ -340,6 +350,12 @@ void HAL_adc_start_conversion(const uint8_t adc_pin) {
     #if HAS_TEMP_ADC_5
       case TEMP_5_PIN: pin_index = TEMP_5; break;
     #endif
+    #if HAS_TEMP_ADC_6
+      case TEMP_6_PIN: pin_index = TEMP_6; break;
+    #endif
+    #if HAS_TEMP_ADC_7
+      case TEMP_7_PIN: pin_index = TEMP_7; break;
+    #endif
     #if HAS_JOY_ADC_X
       case JOY_X_PIN: pin_index = JOY_X; break;
     #endif
@@ -351,6 +367,9 @@ void HAL_adc_start_conversion(const uint8_t adc_pin) {
     #endif
     #if ENABLED(FILAMENT_WIDTH_SENSOR)
       case FILWIDTH_PIN: pin_index = FILWIDTH; break;
+    #endif
+    #if ENABLED(ADC_KEYPAD)
+      case ADC_KEYPAD_PIN: pin_index = ADC_KEY; break;
     #endif
   }
   HAL_adc_result = (HAL_adc_results[(int)pin_index] >> 2) & 0x3FF; // shift to get 10 bits only.

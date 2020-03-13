@@ -1,7 +1,7 @@
 /**
  * Marlin 3D Printer Firmware
  *
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  * Copyright (c) 2016 Bob Cousins bobcousins42@googlemail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@
 typedef uint32_t hal_timer_t;
 #define HAL_TIMER_TYPE_MAX 0xFFFFFFFF
 
-#define HAL_TIMER_RATE         ((SystemCoreClock) / 4)  // frequency of timers peripherals
+#define HAL_TIMER_RATE         ((F_CPU) / 4)  // frequency of timers peripherals
 
 #define STEP_TIMER_NUM 0  // Timer Index for Stepper
 #define TEMP_TIMER_NUM 1  // Timer Index for Temperature

@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -28,6 +28,9 @@
 
   unified_bed_leveling ubl;
 
+  #include "../../../MarlinCore.h"
+  #include "../../../gcode/gcode.h"
+
   #include "../../../module/configuration_store.h"
   #include "../../../module/planner.h"
   #include "../../../module/motion.h"
@@ -50,9 +53,8 @@
       for (uint8_t y = 0;  y < GRID_MAX_POINTS_Y; y++)
         if (!isnan(z_values[x][y])) {
           SERIAL_ECHO_START();
-          SERIAL_ECHOPAIR("  M421 I", x, " J", y);
-          SERIAL_ECHOPAIR_F(" Z", z_values[x][y], 4);
-          SERIAL_EOL();
+          SERIAL_ECHOPAIR("  M421 I", int(x), " J", int(y));
+          SERIAL_ECHOLNPAIR_F_P(SP_Z_STR, z_values[x][y], 4);
           serial_delay(75); // Prevent Printrun from exploding
         }
   }
@@ -97,9 +99,6 @@
     const bool was_enabled = planner.leveling_active;
     set_bed_leveling_enabled(false);
     storage_slot = -1;
-    #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
-      planner.set_z_fade_height(10.0);
-    #endif
     ZERO(z_values);
     #if ENABLED(EXTENSIBLE_UI)
       for (uint8_t x = 0; x < GRID_MAX_POINTS_X; x++)
@@ -155,9 +154,7 @@
    *   4: Compact Human-Readable
    */
   void unified_bed_leveling::display_map(const int map_type) {
-    #if HAS_AUTO_REPORTING || ENABLED(HOST_KEEPALIVE_FEATURE)
-      suspend_auto_report = true;
-    #endif
+    const bool was = gcode.set_autoreport_paused(true);
 
     constexpr uint8_t eachsp = 1 + 6 + 1,                           // [-3.567]
                       twixt = eachsp * (GRID_MAX_POINTS_X) - 9 * 2; // Leading 4sp, Coordinates 9sp each
@@ -177,11 +174,10 @@
       serialprintPGM(csv ? PSTR("CSV:\n") : PSTR("LCD:\n"));
     }
 
-    // Add XY probe offset from extruder because probe_at_point() subtracts them when
+    // Add XY probe offset from extruder because probe.probe_at_point() subtracts them when
     // moving to the XY position to be measured. This ensures better agreement between
     // the current Z position after G28 and the mesh values.
-    const float current_xi = find_closest_x_index(current_position[X_AXIS] + probe_offset[X_AXIS]),
-                current_yi = find_closest_y_index(current_position[Y_AXIS] + probe_offset[Y_AXIS]);
+    const xy_int8_t curr = closest_indexes(xy_pos_t(current_position) + probe.offset_xy);
 
     if (!lcd) SERIAL_EOL();
     for (int8_t j = GRID_MAX_POINTS_Y - 1; j >= 0; j--) {
@@ -197,7 +193,7 @@
       for (uint8_t i = 0; i < GRID_MAX_POINTS_X; i++) {
 
         // Opening Brace or Space
-        const bool is_current = i == current_xi && j == current_yi;
+        const bool is_current = i == curr.x && j == curr.y;
         if (human) SERIAL_CHAR(is_current ? '[' : ' ');
 
         // Z Value at current I, J
@@ -234,9 +230,7 @@
       SERIAL_EOL();
     }
 
-    #if HAS_AUTO_REPORTING || ENABLED(HOST_KEEPALIVE_FEATURE)
-      suspend_auto_report = false;
-    #endif
+    gcode.set_autoreport_paused(was);
   }
 
   bool unified_bed_leveling::sanity_check() {
